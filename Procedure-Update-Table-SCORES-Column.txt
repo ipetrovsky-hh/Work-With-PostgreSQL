@@ -26,7 +26,6 @@ DECLARE
 BEGIN
 
     SELECT SCORES.SummaScore INTO SummaScoreF FROM SCORES WHERE SCORES.NumScore = NumScore1;
-   -- BEGIN TRANSACTION;
     IF SummaScoreF>0 THEN
        UPDATE SCORES SET SummaScore = SummaScore + SummaScoreIN
        WHERE NumScore = NumScore2;    
