@@ -1,0 +1,72 @@
+CREATE TABLE SCORES (
+  NumScore INTEGER PRIMARY KEY,
+  SummaScore INTEGER
+);
+
+-- insert
+INSERT INTO SCORES VALUES (1,100);
+INSERT INTO SCORES VALUES (2,200);
+INSERT INTO SCORES VALUES (3,300);
+INSERT INTO SCORES VALUES (4,400);
+INSERT INTO SCORES VALUES (5,500);
+INSERT INTO SCORES VALUES (6,600);
+
+SELECT NumScore, SummaScore FROM SCORES;
+SELECT * FROM SCORES WHERE SCORES.NumScore=2;
+
+CREATE PROCEDURE ChangeScores
+(
+    IN NumScore1 INTEGER,
+    IN NumScore2 INTEGER,
+    IN SummaScoreIN INTEGER
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    SummaScoreF INTEGER = 0;
+BEGIN
+
+    SELECT SCORES.SummaScore INTO SummaScoreF FROM SCORES WHERE SCORES.NumScore = NumScore1;
+   -- BEGIN TRANSACTION;
+    IF SummaScoreF>0 THEN
+       UPDATE SCORES SET SummaScore = SummaScore + SummaScoreIN
+       WHERE NumScore = NumScore2;    
+       COMMIT;       
+    END IF;  
+END; $$;
+
+CALL ChangeScores(1,2,300);
+
+SELECT * FROM SCORES WHERE SCORES.NumScore=2
+/*
+Output:
+CREATE TABLE
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ numscore | summascore 
+----------+------------
+        1 |        100
+        2 |        200
+        3 |        300
+        4 |        400
+        5 |        500
+        6 |        600
+(6 rows)
+
+ numscore | summascore 
+----------+------------
+        2 |        200
+(1 row)
+
+CREATE PROCEDURE
+CALL
+ numscore | summascore 
+----------+------------
+        2 |        500
+(1 row)
+
+Ready
+*/
